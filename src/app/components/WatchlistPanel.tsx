@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Plus, TrendingUp, TrendingDown, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,8 +34,9 @@ export default function WatchlistPanel() {
       </div>
       <div className="divide-y divide-border">
         {watchlistItems?.map((item) => (
-          <div
+          <Link
             key={item?.id}
+            href={`/stock/${item?.symbol}`}
             className="flex items-center px-4 py-3 hover:bg-muted/40 transition-colors cursor-pointer group"
             onMouseEnter={() => setHovered(item?.id)}
             onMouseLeave={() => setHovered(null)}
@@ -62,20 +64,20 @@ export default function WatchlistPanel() {
             {hovered === item?.id && (
               <div className="flex items-center gap-1 ml-2 fade-in">
                 <button
-                  onClick={() => toast?.success(`Buy order for ${item?.symbol} initiated`)}
+                  onClick={(e) => { e?.preventDefault(); toast?.success(`Buy order for ${item?.symbol} initiated`); }}
                   className="px-2 py-1 bg-positive-subtle text-positive text-[11px] font-700 rounded-lg hover:bg-positive/20 transition-colors"
                 >
                   B
                 </button>
                 <button
-                  onClick={() => toast?.info(`Sell order for ${item?.symbol} initiated`)}
+                  onClick={(e) => { e?.preventDefault(); toast?.info(`Sell order for ${item?.symbol} initiated`); }}
                   className="px-2 py-1 bg-negative-subtle text-negative text-[11px] font-700 rounded-lg hover:bg-negative/20 transition-colors"
                 >
                   S
                 </button>
               </div>
             )}
-          </div>
+          </Link>
         ))}
       </div>
       <div className="px-4 py-3 border-t border-border">

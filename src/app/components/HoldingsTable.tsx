@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TrendingUp, TrendingDown, ChevronUp, ChevronDown, ShoppingCart, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,6 +26,7 @@ export default function HoldingsTable() {
   const [sortCol, setSortCol] = useState<string>('totalPnl');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [filter, setFilter] = useState<'all' | 'profit' | 'loss'>('all');
+  const router = useRouter();
 
   const handleSort = (col: string) => {
     if (sortCol === col) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -104,7 +106,11 @@ export default function HoldingsTable() {
               const currentValue = h.qty * h.ltp;
               const pnlPct = ((h.totalPnl / (h.qty * h.avgBuy)) * 100).toFixed(2);
               return (
-                <tr key={h.id} className="hover:bg-muted/40 transition-colors group">
+                <tr
+                  key={h.id}
+                  className="hover:bg-muted/40 transition-colors group cursor-pointer"
+                  onClick={() => router.push(`/stock/${h.symbol}`)}
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center text-[10px] font-700 text-muted-foreground flex-shrink-0">
@@ -144,14 +150,14 @@ export default function HoldingsTable() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => toast.success(`Buy order for ${h.symbol} placed`)}
+                        onClick={(e) => { e.stopPropagation(); toast.success(`Buy order for ${h.symbol} placed`); }}
                         className="p-1.5 rounded-lg bg-positive-subtle text-positive hover:bg-positive/20 transition-colors"
                         title="Buy more"
                       >
                         <ShoppingCart size={13} />
                       </button>
                       <button
-                        onClick={() => toast.info(`Sell order for ${h.symbol} placed`)}
+                        onClick={(e) => { e.stopPropagation(); toast.info(`Sell order for ${h.symbol} placed`); }}
                         className="p-1.5 rounded-lg bg-negative-subtle text-negative hover:bg-negative/20 transition-colors"
                         title="Sell position"
                       >

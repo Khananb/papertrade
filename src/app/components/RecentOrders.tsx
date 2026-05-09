@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { CheckCircle2, Clock, XCircle } from 'lucide-react';
 
 
@@ -39,6 +40,9 @@ export default function RecentOrders() {
     return true;
   });
 
+  // Extract base symbol (strip option details like "NIFTY 24400 CE")
+  const getBaseSymbol = (symbol: string) => symbol.split(' ')[0];
+
   return (
     <div className="bg-card border border-border rounded-2xl card-shadow overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">
@@ -72,9 +76,22 @@ export default function RecentOrders() {
           <tbody className="divide-y divide-border">
             {filtered.map((order) => {
               const sc = statusConfig[order.status];
+              const baseSymbol = getBaseSymbol(order.symbol);
+              const isFO = order.segment === 'F&O';
               return (
                 <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-[13px] font-700 text-foreground">{order.symbol}</td>
+                  <td className="px-4 py-3">
+                    {isFO ? (
+                      <span className="text-[13px] font-700 text-foreground">{order.symbol}</span>
+                    ) : (
+                      <Link
+                        href={`/stock/${baseSymbol}`}
+                        className="text-[13px] font-700 text-foreground hover:text-primary transition-colors underline-offset-2 hover:underline"
+                      >
+                        {order.symbol}
+                      </Link>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`text-[12px] font-700 ${order.type === 'BUY' ? 'text-positive' : 'text-negative'}`}>
                       {order.type}
